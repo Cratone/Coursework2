@@ -1,0 +1,148 @@
+body {
+    font-family: Arial, serif;
+}
+
+/* Общий стиль для контейнеров */
+.model-types,
+.platform-types,
+.data-model-type1,
+.data-model-type2,
+.data-model-type3,
+.data-platform,
+.arrows-box {
+    margin: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+}
+
+/* Заголовки */
+h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+/* Кнопки */
+.buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.buttons button {
+    padding: 10px 15px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    background-color: #e0e0e0;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.buttons button:hover {
+    background-color: #d0d0d0;
+    transform: scale(1.05);
+}
+
+.buttons button.selectedButton {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+.images img {
+    width: auto; /* Поддержка пропорций по ширине */
+    height: auto; /* Поддержка пропорций по высоте */
+    max-width: 100%; /* Вписывание в контейнер */
+    max-height: 100%; /* Вписывание в контейнер */
+    margin: auto; /* Центрирование внутри контейнера */
+}
+
+.images {
+    display: flex;
+}
+
+.image-container {
+    width: 25%; /* Фиксированная ширина контейнера */
+    height: 150px; /* Фиксированная высота контейнера */
+    display: flex;
+    align-items: center; /* Центрирование по вертикали */
+    justify-content: center; /* Центрирование по горизонтали */
+    background-color: #f0f0f0; /* Цвет фона для пустого пространства */
+    border: 2px solid #ddd; /* Рамка вокруг изображения */
+    border-radius: 5px; /* Радиус закругления контейнера */
+    overflow: hidden; /* Обрезка лишнего контента, если нужно */
+    margin: 5px; /* Расстояние между контейнерами */
+}
+
+.image-container:hover {
+    transform: scale(1.3);
+    transition: border-color 0.3s, transform 0.3s;
+    border-color: #007bff;
+}
+
+/* Инпуты */
+label {
+    font-size: 14px;
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+input[type="text"],
+input[type="number"] {
+    width: calc(100% - 20px);
+    padding: 8px 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+/* Data Model Type 2 */
+.data-model-type2 p {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.data-model-type2 div {
+    margin-bottom: 15px;
+}
+
+.data-model-type2 input[type="text"] {
+    width: 75px;
+    margin-right: 5px;
+    text-align: center;
+}
+
+.data-model-type2 input[type="number"] {
+    width: 100px;
+}
+
+/* Data Model Type 3 */
+.arrows-boxes {
+    display: flex;
+    margin-top: 20px;
+}
+
+
+/* Кнопка сбора данных */
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #28a745;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+button:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
