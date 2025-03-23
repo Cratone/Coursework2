@@ -9,7 +9,8 @@ body {
 .data-model-type2,
 .data-model-type3,
 .data-platform,
-.arrows-box {
+.arrows-box,
+.expansion-types {
     margin: 20px;
     padding: 15px;
     border: 1px solid #ddd;
@@ -145,4 +146,41 @@ button {
 button:hover {
     background-color: #218838;
     transform: scale(1.05);
+}
+
+button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Loading indicator */
+.loader {
+    margin-left: 10px;
+    padding: 8px 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    color: #007bff;
+    font-weight: bold;
+    border: 1px solid #007bff;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.6;
+    }
+}
+
+/* Action buttons container */
+.action-buttons {
+    display: flex;
+    align-items: center;
+    margin: 20px;
 }

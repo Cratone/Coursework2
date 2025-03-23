@@ -17,7 +17,7 @@ def generate_word(word, is_left_word, extrude):
     bpy.ops.object.text_add(location=(0, 0, 0))
     text_obj = bpy.context.object
     text_obj.data.body = word
-    text_obj.data.font = bpy.data.fonts["Arial Regular"]
+    text_obj.data.font = bpy.data.fonts["Open Sans Regular"]
     text_obj.data.size = 2.0
     text_obj.data.extrude = extrude
     text_obj.rotation_euler = (math.radians(90), 0, 0) if is_left_word else (math.radians(90), 0, math.radians(90))
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     x1, x2, y1, y2 = map(float, (x1, x2, y1, y2))
 
     # Download a font
-    bpy.ops.font.open(filepath="C:\\Windows\\Fonts\\arial.ttf")
+    bpy.ops.font.open(filepath="static/OpenSans-VariableFont_wdth,wght.ttf")
 
     # Create model
     bpy.ops.object.select_all(action='SELECT')

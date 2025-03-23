@@ -4,15 +4,13 @@ import sys
 import os
 import math
 import argparse
+import time
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
 from utility import intersect_and_delete, get_lengths_parts_of_text, merge_blend_files
-
-
-BLENDER_PATH = "C:\\Program Files\\Blender Foundation\\Blender 4.0\\blender.exe"
 
 
 def generate_model(word1, word2, lengths1, lengths2, output_name):
@@ -22,7 +20,7 @@ def generate_model(word1, word2, lengths1, lengths2, output_name):
     processes = []
     for i in range(len(lengths1) - 1):
         p = subprocess.Popen([
-            BLENDER_PATH, "--background", "--python", "generate_part.py", "--", word1, word2, str(lengths1[i]),
+            "blender", "--background", "--python", "generate_part.py", "--", word1, word2, str(lengths1[i]),
             str(lengths1[i + 1]), str(lengths2[i]), str(lengths2[i + 1]), f"{output_name}_part_{i}.blend"
         ])
         processes.append(p)
@@ -33,7 +31,7 @@ def generate_model(word1, word2, lengths1, lengths2, output_name):
 
     # Union the parts of the model to one file
     merge_blend_files([f"{output_name}_part_{i}.blend" for i in range(len(lengths1) - 1)])
-
+    
 
 def generate_model_with_counts_letters(word1, word2, counts_letters1, counts_letters2, output_name):
     """Generates a model of the second type"""
@@ -117,7 +115,7 @@ def createParser ():
     parser = argparse.ArgumentParser()
     parser.add_argument('--words', nargs=2)
     parser.add_argument("--output", required=True)
-    parser.add_argument("--expansion", default="blend", choices=["blend", "obj", "stl"])
+    parser.add_argument("--expansion", default="obj", choices=["blend", "obj", "stl"])
     parser.add_argument("--type_model", choices=[1, 2, 3], type=int)
     parser.add_argument("--counts_letters", nargs="*")
     parser.add_argument("--lengths", nargs="*")
@@ -129,7 +127,7 @@ def createParser ():
 
 
 if __name__ == "__main__":
-    bpy.ops.font.open(filepath="C:\\Windows\\Fonts\\arial.ttf")
+    bpy.ops.font.open(filepath="static/OpenSans-VariableFont_wdth,wght.ttf")
 
     # Parse arguments
     parser = createParser()
@@ -141,7 +139,7 @@ if __name__ == "__main__":
     elif namespace.type_model == 2:
         counts_letters1 = [int(x) for x in namespace.counts_letters[0].split(",")]
         counts_letters2 = [int(x) for x in namespace.counts_letters[1].split(",")]
-        generate_model_with_counts_letters(*namespace.words, *namespace.counts_letters, namespace.output)
+        generate_model_with_counts_letters(*namespace.words, counts_letters1, counts_letters2, namespace.output)
     else:
         lengths1 = [float(x) for x in namespace.lengths[0].split(",")]
         lengths2 = [float(x) for x in namespace.lengths[1].split(",")]
@@ -155,4 +153,9 @@ if __name__ == "__main__":
             generate_hexagon_platform(list(bpy.context.scene.objects), namespace.height_platform, namespace.offset_platform)
 
     # Save model
-    bpy.ops.wm.save_as_mainfile(filepath=f"{namespace.output}.blend")
+    if namespace.expansion == "blend":
+        bpy.ops.wm.save_as_mainfile(filepath=f"{namespace.output}.blend")
+    elif namespace.expansion == "obj":
+        bpy.ops.export_scene.obj(filepath=f"{namespace.output}.obj", use_selection=False)
+    elif namespace.expansion == "stl":
+        bpy.ops.export_mesh.stl(filepath=f"{namespace.output}.stl", use_selection=False)

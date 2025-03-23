@@ -1,0 +1,16 @@
+services:
+  algorithm:
+    build: ./algorithm
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./algorithm:/app
+    environment:
+      - FLASK_ENV=production
+
+  website:
+    build: ./website
+    ports:
+      - "8080:8080"
+    depends_on:
+      - algorithm

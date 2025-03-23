@@ -424,13 +424,57 @@ Vue.component("data-platform", {
     }
 })
 
+Vue.component('expansion-types', {
+    template: `
+        <div class="expansion-types">
+        <div class="buttons">
+            <h3>Расширение файла</h3>
+            <button
+                    v-for="(expansionType, index) in expansionTypes"
+                    :key="index"
+                    @click="selectExpansionType(index)"
+                    :class="{ selectedButton: selectedExpansionType == index }"
+            >
+                {{ expansionType.name }}
+            </button>
+        </div>  
+    </div>
+    `,
+    data() {
+        return {
+            selectedExpansionType: 0,
+            expansionTypes: [
+                {
+                    name: "blend",
+                },
+                {
+                    name: "obj",
+                },
+                {
+                    name: "stl",
+                }
+            ]
+        };
+    },
+    methods: {
+        selectExpansionType(index) {
+            this.selectedExpansionType = index;
+            this.$emit('update:expansionType', this.expansionTypes[index].name);
+        }
+    }
+});
+
 var vue = new Vue({
     el: "#app",
     data: {
         selectedModelType: 1,
         selectedPlatformType: 0,
-        word1: "",
-        word2: "",
+        word11: "",
+        word12: "",
+        word21: "",
+        word22: "",
+        word31: "",
+        word32: "",
         countLetters1: [],
         countLetters2: [],
         lengths1: [0,0,1],
@@ -439,36 +483,107 @@ var vue = new Vue({
         offset: 0.1,
         arg1: "",
         arg2: "",
-        output: ""
+        output: "",
+        isLoading: false,
+        selectedExpansionType: "blend"
     },
     methods: {
         startGeneration() {
-            if (this.word1.length == 0 || this.word2.length == 0) {
-                alert("Длина слова не может быть равна 0")
-                return
-            }
+            let word1 = ""
+            let word2 = ""
+
             if (this.selectedModelType == 1) {
-                if (this.word1.length != this.word2.length) {
+                word1 = this.word11
+                word2 = this.word12
+                if (word1.length != word2.length) {
                     alert("Длины слов не равны")
                     return
                 }
             } else if (this.selectedModelType == 2) {
+                word1 = this.word21
+                word2 = this.word22
                 for (let i = 0; i < this.countLetters1.length; ++i) {
                     if (this.countLetters1[i] == "" || this.countLetters2[i] == "") {
                         alert("Есть незаполненный элемент")
                         return
                     }
                 }
+            } else if (this.selectedModelType == 3) {
+                word1 = this.word31
+                word2 = this.word32
             }
-            alert(`blender --background --python "C:\\Users\\danil\\PycharmProjects\\Курсовая\\algorithm\\main.py" -- --words "${this.word1}" "${this.word2}" --counts_letters "${this.countLetters1.join(',')}" "${this.countLetters2.join(',')}" --lengths "${this.lengths1.join(',')}" "${this.lengths2.join(',')}" --output final --type_model=${this.selectedModelType} --type_platform=${this.selectedPlatformType} --offset=${this.offset} --height=${this.height}`)
+
+            if (word1.length == 0 || word2.length == 0) {
+                alert("Длина слова не может быть равна 0")
+                return
+            }
+            
+            // Show loading indicator
+            this.isLoading = true;
+            
+            // Prepare request data
+            const requestData = {
+                word1: word1,
+                word2: word2,
+                type_model: this.selectedModelType,
+                type_platform: this.selectedPlatformType,
+                offset_platform: this.offset,
+                height_platform: this.height,
+                expansion: this.selectedExpansionType
+            };
+            
+            // Add model-specific parameters
+            if (this.selectedModelType === 2) {
+                requestData.counts_letters1 = this.countLetters1.join(',');
+                requestData.counts_letters2 = this.countLetters2.join(',');
+            } else if (this.selectedModelType === 3) {
+                requestData.lengths1 = this.lengths1.join(',');
+                requestData.lengths2 = this.lengths2.join(',');
+            }
+            
+            // Check URL depending on if we're using the Vue dev server or the production Node server
+            const apiUrl = 'http://localhost:5000/generate';
+            
+            // Send request to the server
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`Server responded with status ${response.status}: ${text}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                this.isLoading = false;
+                if (data.status === 'success') {
+                    // Model generated successfully, offer download                    
+                    alert(`Модель успешно создана! Нажмите OK для загрузки.`);
+                    
+                    window.location.href = 'http://localhost:5000' + data.download_url;
+                } else {
+                    alert('Ошибка при создании модели: ' + (data.error || 'Неизвестная ошибка'));
+                }
+            })
+            .catch((error) => {
+                this.isLoading = false;
+                console.error('Error:', error);
+                alert('Произошла ошибка при отправке запроса: ' + error.message);
+            });
         },
         updateModelDataType1(words) {
-            this.word1 = words[0]
-            this.word2 = words[1]
+            this.word11 = words[0]
+            this.word12 = words[1]
         },
         updateModelDataType2(params) {
-            this.word1 = params[0].join('')
-            this.word2 = params[1].join('')
+            this.word21 = params[0].join('')
+            this.word22 = params[1].join('')
             this.countLetters1 = []
             this.countLetters2 = []
             for (let i = 0; i < params[0].length; ++i) {
@@ -477,10 +592,14 @@ var vue = new Vue({
             }
         },
         updateModelDataType3(params) {
-            this.word1 = params[0]
-            this.word2 = params[1]
-            this.lengths1 = params[2]
-            this.lengths2 = params[3]
+            this.word31 = params[0]
+            this.word32 = params[1]
+            this.lengths1 = []
+            this.lengths2 = []
+            for (let i = 0; i < params[2].length; ++i) {
+                this.lengths1.push(params[2][i])
+                this.lengths2.push(params[3][i])
+            }
         },
         updatePlatformData(params) {
             this.height = params[0]
@@ -496,7 +615,12 @@ var vue = new Vue({
             
             <platform-types @update:platformType="selectedPlatformType = $event"></platform-types>
             <data-platform v-show="selectedPlatformType != 0" @update:platformData="updatePlatformData($event)"></data-platform>
-            <button @click="startGeneration">Запустить генерацию</button>
+            
+            <expansion-types @update:expansionType="selectedExpansionType = $event"></expansion-types>
+            <div class="action-buttons">
+                <button @click="startGeneration" :disabled="isLoading">Запустить генерацию</button>
+                <div v-if="isLoading" class="loader">Создание модели...</div>
+            </div>
         </div>
         
     `
