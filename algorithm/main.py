@@ -127,7 +127,7 @@ def createParser ():
 
 
 if __name__ == "__main__":
-    bpy.ops.font.open(filepath="static/OpenSans-VariableFont_wdth,wght.ttf")
+    bpy.ops.font.open(filepath="static/ARIAL.TTF")
 
     # Parse arguments
     parser = createParser()
@@ -156,6 +156,6 @@ if __name__ == "__main__":
     if namespace.expansion == "blend":
         bpy.ops.wm.save_as_mainfile(filepath=f"{namespace.output}.blend")
     elif namespace.expansion == "obj":
-        bpy.ops.export_scene.obj(filepath=f"{namespace.output}.obj", use_selection=False)
+        bpy.ops.wm.obj_export(filepath=f"{namespace.output}.obj")
     elif namespace.expansion == "stl":
         bpy.ops.export_mesh.stl(filepath=f"{namespace.output}.stl", use_selection=False)

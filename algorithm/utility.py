@@ -8,7 +8,7 @@ def get_length_text(text):
     bpy.ops.object.text_add(location=(0, 0, 0))
     text_obj = bpy.context.object
     text_obj.data.body = text
-    text_obj.data.font = bpy.data.fonts["Open Sans Regular"]
+    text_obj.data.font = bpy.data.fonts["Arial Regular"]
 
     text_obj.data.size = 2.0
 

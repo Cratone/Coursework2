@@ -24,7 +24,7 @@ Vue.component('model-types', {
             selectedModelType: 0,
             modelTypes: [
                 {
-                    name: "Type 1",
+                    name: "Первый тип",
                     images: [
                         "assets/model type 1 angle 1.png",
                         "assets/model type 1 angle 2.png",
@@ -32,7 +32,7 @@ Vue.component('model-types', {
                     ]
                 },
                 {
-                    name: "Type 2",
+                    name: "Второй тип",
                     images: [
                         "assets/model type 2 angle 1.png",
                         "assets/model type 2 angle 2.png",
@@ -40,7 +40,7 @@ Vue.component('model-types', {
                     ]
                 },
                 {
-                    name: "Type 3",
+                    name: "Третий тип",
                     images: [
                         "assets/model type 3 angle 1.png",
                         "assets/model type 3 angle 2.png",
@@ -84,15 +84,15 @@ Vue.component('platform-types', {
             selectedPlatformType: 0,
             platformTypes: [
                 {
-                    name: "Without platform",
+                    name: "Без платформы",
                     image: "assets/without platform.png"
                 },
                 {
-                    name: "Type 1",
+                    name: "Первый тип",
                     image: "assets/platform type 1.png"
                 },
                 {
-                    name: "Type 2",
+                    name: "Второй тип",
                     image: "assets/platform type 2.png"
                 }
             ]
@@ -110,11 +110,11 @@ Vue.component("data-model-type1", {
     template: `
         <div class="data-model-type1">
             <div>
-                <label for="word1">Первое слово:</label>
+                <label for="word1">Первое слово</label>
                 <input type="text" id="word1" v-model="word1" @input="handleInput">
               </div>
               <div>
-                <label for="word2">Второе слово:</label>
+                <label for="word2">Второе слово</label>
                 <input type="text" id="word2" v-model="word2" @input="handleInput">
               </div>
         </div>
@@ -127,6 +127,8 @@ Vue.component("data-model-type1", {
     },
     methods: {
         handleInput() {
+            this.word1 = this.word1.toUpperCase();
+            this.word2 = this.word2.toUpperCase();
             this.$emit('update:modelDataType1', [this.word1, this.word2]);
         }
     }
@@ -136,7 +138,7 @@ Vue.component("data-model-type2", {
     template: `
         <div class="data-model-type2">
             <div>
-                <p>Первое слово:</p>
+                <p>Первое слово</p>
                 <input 
                     type="text" 
                     v-for="(item, index) in letters1" 
@@ -146,7 +148,7 @@ Vue.component("data-model-type2", {
                 />
             </div>
             <div>
-                <p>Второе слово:</p>
+                <p>Второе слово</p>
                 <input 
                     type="text" 
                     v-for="(item, index) in letters2" 
@@ -156,7 +158,7 @@ Vue.component("data-model-type2", {
                 />
             </div>
             <div>
-                <p>Количество ячеек:</p>
+                <p>Количество ячеек</p>
                 <input type="number" v-model.number="countCells" min="1" max="100" step="1" @input="changeCountCells">
             </div>
         </div>
@@ -190,6 +192,10 @@ Vue.component("data-model-type2", {
             this.$emit('update:modelDataType2', [this.letters1, this.letters2]);
         },
         handleInput() {
+            for (let i = 0; i < this.countCells; ++i) {
+                this.letters1[i] = this.letters1[i].toUpperCase();
+                this.letters2[i] = this.letters2[i].toUpperCase();
+            }
             this.$emit('update:modelDataType2', [this.letters1, this.letters2]);
         }
     }
@@ -364,7 +370,7 @@ Vue.component("data-model-type3", {
                 <arrows-box :word="word2" :countArrows="countArrows" @update:arrowsData="updateArrowsData($event, 2)"></arrows-box>
             </div>
             <div>
-                <p>Количество разделителей:</p>
+                <p>Количество разделителей</p>
                 <input type="number" v-model.number="countArrows" min="1" max="100" step="1" @input="updateCountArrows">
             </div>
         </div>
@@ -402,11 +408,11 @@ Vue.component("data-platform", {
     template: `
         <div class="data-platform">
             <div>
-                <label for="height">Высота платформы относительно высоты букв:</label>
+                <label for="height">Высота платформы относительно высоты букв</label>
                 <input type="number" id="height" v-model="height" @input="handleInput">
               </div>
               <div>
-                <label for="offset">Отступ платформы от букв относительно высоты букв:</label>
+                <label for="offset">Отступ платформы от букв относительно высоты букв</label>
                 <input type="number" id="offset" v-model="offset" @input="handleInput">
               </div>
         </div>
@@ -541,8 +547,7 @@ var vue = new Vue({
                 requestData.lengths2 = this.lengths2.join(',');
             }
             
-            // Check URL depending on if we're using the Vue dev server or the production Node server
-            const apiUrl = 'http://localhost:5000/generate';
+            const apiUrl = 'http://localhost:8080/generate';
             
             // Send request to the server
             fetch(apiUrl, {
@@ -566,7 +571,7 @@ var vue = new Vue({
                     // Model generated successfully, offer download                    
                     alert(`Модель успешно создана! Нажмите OK для загрузки.`);
                     
-                    window.location.href = 'http://localhost:5000' + data.download_url;
+                    window.location.href = 'http://localhost:8080' + data.download_url;
                 } else {
                     alert('Ошибка при создании модели: ' + (data.error || 'Неизвестная ошибка'));
                 }

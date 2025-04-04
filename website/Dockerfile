@@ -7,6 +7,7 @@ WORKDIR /app
 # Копируем package.json и устанавливаем зависимости
 COPY package*.json ./
 RUN npm install
+RUN npm install http-proxy
 
 # Копируем исходники и собираем проект
 COPY . .
